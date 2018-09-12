@@ -2,6 +2,10 @@ from flask import Flask, g, jsonify, render_template
 
 import config
 
+DEBUG = True
+HOST = '0.0.0.0'
+PORT = 8000
+
 app = Flask(__name__)
 
 
