@@ -10,7 +10,6 @@ DATABASE = SqliteDatabase('todos.sqlite')
 
 class Todo(Model):
 	name = CharField()
-	content = TextField()
 	created_at = DateTimeField(default=datetime.datetime.now)
 	
 	class Meta:
