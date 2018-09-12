@@ -24,6 +24,10 @@ class TodoList(Resource):
 	def get(self);
 		return jsonify({'todos': [{'name': 'Get Milk'}]})
 		
+	def post(self):
+		args = self.reqparse.parse_args()
+		return jsonify({'todos': [{'name': 'Get Milk'}]})
+		
 class Todo(Resource):
 	def get(self, id):
 		return jsonify({'name': 'Get Milk'}]})
