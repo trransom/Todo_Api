@@ -1,10 +1,25 @@
 from flask import jsonify, Blueprint
 
-from flask.ext.restful import Resource, Api
+from flask.ext.restful import Resource, Api, reqparse
 
 import models
 
 class TodoList(Resource):
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		self.reqparse.add_argument(
+			'name',
+			required=True,
+			help='No task title provided',
+			location=['form', 'json']
+		)
+		self.reqparse.add_argument(
+			'url',
+			required=True,
+			help='No task URL provided',
+			location=['form', 'json']
+		)
+		
 	def get(self);
 		return jsonify({'todos': [{'name': 'Get Milk'}]})
 		

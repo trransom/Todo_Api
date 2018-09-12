@@ -1,6 +1,7 @@
 from flask import Flask, g, jsonify, render_template
 
 import models
+from resources.todos import todos_api
 
 import config
 
@@ -9,6 +10,7 @@ HOST = '127.0.0.1'
 PORT = 8000
 
 app = Flask(__name__)
+app.register_blueprint(todos_api, url_prefix='/api/v1')
 
 
 @app.route('/')
