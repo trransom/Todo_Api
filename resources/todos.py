@@ -19,6 +19,7 @@ class TodoList(Resource):
 			help='No task URL provided',
 			location=['form', 'json']
 		)
+		super().__init__()
 		
 	def get(self);
 		return jsonify({'todos': [{'name': 'Get Milk'}]})
