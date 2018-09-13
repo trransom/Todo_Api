@@ -1,6 +1,7 @@
 from flask import jsonify, Blueprint
 
-from flask_restful import Resource, Api, reqparse, inputs, fields
+from flask_restful import (Resource, Api, reqparse, inputs, fields,
+							marshal, marshal_with, url_for, abort)
 
 import models
 
@@ -8,6 +9,14 @@ todo_fields = {
 	'id': fields.Integer,
 	'name': fields.String
 }
+
+def todo_or_404(course_id):
+	try:
+		course = models.Todo.get(models.Todo.id==todo_id)
+	except models.Todo.DoesNotExist:
+		abort(404)
+	else:
+		return todo
 
 class TodoList(Resource):
 	def __init__(self):
@@ -21,22 +30,44 @@ class TodoList(Resource):
 		super().__init__()
 		
 	def get(self):
-		return jsonify({'todos': [{'name': 'Get Milk'}]})
+		todos = [marshal(todo, todo_fields) 
+				for todo in models.Todo.select()]
+		return {'todos': todos}
 		
+	@marshal_with(todo_fields)
 	def post(self):
 		args = self.reqparse.parse_args()
-		models.Todo.create(**args)
-		return jsonify({'todos': [{'name': 'Get Milk'}]})
+		todo = models.Todo.create(**args)
+		return (todo, 201, 
+				{'Location': url_for('resources.todos.todo', id=todo.id)})
 		
 class Todo(Resource):
-	def get(self, id):
-		return jsonify({'name': [{'Get Milk'}]})
+	def __init__(self):
+		self.reqparse = reqparse.RequestParser()
+		self.reqparse.add_argument(
+			'name',
+			required=True,
+			help='No task title provided',
+			location=['form', 'json']
+		)
+		super().__init__()
 		
+	@marshal_with(todo_fields)
+	def get(self, id):
+		return add_reviews(todo_or_404(id))
+		
+	@marshal_with(todo_fields)
 	def put(self, id):
-		return jsonify({'name': [{'Get Milk'}]})
+		args = self.reqparse.parse_args()
+		query = models.Todo.update(**args).where(models.Todo.id==id)
+		query.execute()
+		return (add_reviews(models.Todo.get(models.Todo.id==id)), 200,
+				{'Location': url_for('resources.todos.todo', id=id)})
 		
 	def delete(self, id):
-		return jsonify({'name': [{'Get Milk'}]})
+		query = models.Todo.delete().where(models.Todo.id==id)
+		query.execute()
+		return '', 204, {'Location': url_for('resources.todos.todos')}
 		
 todos_api = Blueprint('resources.courses', __name__)
 api = Api(todos_api)
