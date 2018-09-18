@@ -25,8 +25,14 @@ class TodoClass(unittest.TestCase):
 		app.config['TESTING'] = True
 		self.app = app.test_client()
 		Todo.create(name='TODO')
-		listview = self.app.get('/')
+		listview = self.app.get('/api/v1/todos')
 		self.assertEqual(listview.status_code, 200)
+		
+	def test_delete(self):
+		app.config['TESTING'] = True
+		self.app = app.test_client()
+		delete = self.app.delete('/api/v1/todos/1')
+		self.assertEqual(delete.status_code, 204)
 		
 if __name__ == '__main__':
 	unittest.main()
