@@ -14,11 +14,11 @@ todo_fields = {
 
 def todo_or_404(todo_id):
 	try:
-		todo = models.Todo.get(models.Todo.id==todo_id)
+		todo_obj = models.Todo.get(models.Todo.id==todo_id)
 	except models.Todo.DoesNotExist:
 		abort(404)
 	else:
-		return todo
+		return todo_obj
 
 class TodoList(Resource):
 	def __init__(self):
